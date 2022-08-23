@@ -1,0 +1,20 @@
+{
+    "name": "Overratd",
+    "author": "Garret Lowe",
+    "description": "A Chrome Extension for Letterboxd which adds rating histograms to public lists based on the author's rating",
+    "version": "1.0",
+    "manifest_version": 3,
+    "permissions": ["activeTab"],
+    "content_scripts": [
+      {
+        "matches": ["https://letterboxd.com/*/list/*/"],
+        "js": ["overratd.js"]
+      }
+    ],
+    "icons": {
+        "16": "/images/overratd16.png",
+        "32": "/images/overratd32.png",
+        "48": "/images/overratd48.png",
+        "128": "/images/overratd128.png"
+    }
+}
