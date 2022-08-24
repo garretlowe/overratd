@@ -24,10 +24,11 @@ function getElementByXPath(xpath)
 function getStars(bucket)
 {   
     let stars = '\u2605'.repeat(Math.floor(bucket/2))
-    if ((bucket/2) % 2 != 0)
+    if ((bucket) % 2 != 0)
     {
         return `${stars}\u00BD`;
     }
+    return stars;
 }
 
 function getOwnerName()
@@ -81,7 +82,6 @@ var ratingBuckets = {
 
 // Setup Elements
 var listDiv = document.createElement('div');
-listDiv.setAttribute('class', 'rating-histogram clear rating-histogram-exploded');
 
 var star1Span = document.createElement('span');
 star1Span.setAttribute('class', 'rating-green rating-green-tiny rating-1');
@@ -90,12 +90,12 @@ var star1 = document.createElement('span');
 star1.setAttribute('class', 'rating rated-2');
 star1.textContent = '\u2605';
 
-var star2Span = document.createElement('span');
-star2Span.setAttribute('class', 'rating-green rating-green-tiny rating-5');
+var star5Span = document.createElement('span');
+star5Span.setAttribute('class', 'rating-green rating-green-tiny rating-5');
 
-var star2 = document.createElement('span');
-star2.setAttribute('class', 'rating rated-10');
-star2.textContent = '\u2605\u2605\u2605\u2605\u2605';
+var star5 = document.createElement('span');
+star5.setAttribute('class', 'rating rated-10');
+star5.textContent = '\u2605\u2605\u2605\u2605\u2605';
 
 var movieList = getElementByXPath("//*[@id=\"content\"]/div/div/section/ul").getElementsByTagName("li");
 
@@ -122,6 +122,17 @@ for (let i = 0; i < movieList.length; i++)
     }
 }
 
+// Determine Complexity
+var simplify = ratingBuckets[1]['count'] == 0 && ratingBuckets[3]['count'] == 0 && ratingBuckets[5]['count'] == 0 && ratingBuckets[7]['count'] == 0 && ratingBuckets[9]['count'] == 0;
+
+if (simplify) {
+    listDiv.setAttribute('class', 'rating-histogram clear rating-histogram-condensed');
+}
+else
+{
+    listDiv.setAttribute('class', 'rating-histogram clear rating-histogram-exploded');
+}
+
 // Find Highest Count
 let maxCount = 0
 Object.keys(ratingBuckets).forEach(bucket => {
@@ -143,31 +154,38 @@ Object.keys(ratingBuckets).forEach(bucket => {
 });
 
 // Build Histogram
-Object.keys(ratingBuckets).forEach (bucket => {
+Object.keys(ratingBuckets).forEach(bucket => {
+    // Skip bar if simplified
+    if (simplify && bucket%2 != 0) {
+        return;
+    }
 
+    // Create Bar
     let movie = document.createElement('li');
-    if (bucket == 1) 
+    movie.setAttribute('class', 'rating-histogram-bar');
+
+    // Size according to complexity
+    if (simplify) 
     {
-        movie.setAttribute('class', 'rating-histogram-bar tooltip');
+        movie.setAttribute('style', `width: 31px; left: ${32*((bucket/2)-1)}px`);
     } 
     else 
     {
-        movie.setAttribute('class', 'rating-histogram-bar');
+        movie.setAttribute('style', `width: 15px; left: ${16*(bucket-1)}px`);
     }
-    movie.setAttribute('style', `width: 15px; left: ${16*(bucket-1)}px`);
 
     let movieLink = document.createElement('a');
     movieLink.setAttribute('class', 'ir tooltip');
 
     let movieI = document.createElement('i');
     movieI.setAttribute('style', `height: ${ratingBuckets[bucket]['height']}px;`);
-    if (ratingBuckets[bucket] == 0)
+    if (ratingBuckets[bucket]['count'] == 0)
     {
-        var linkText = 'No half-★ ratings';
+        var linkText = 'No ratings';
     }
     else
     {
-        var linkText = `${ratingBuckets[bucket]}&nbsp${getStars(bucket)} ratings (${ratingBuckets[bucket]/movieList.length}%)`;
+        var linkText = `${ratingBuckets[bucket]['count']}&nbsp${getStars(bucket)} ratings (${Math.round(ratingBuckets[bucket]['count']/movieList.length*100)}%)`;
     }
     movieLink.setAttribute('data-original-title', linkText);
     movieLink.textContent = linkText;
@@ -179,10 +197,10 @@ Object.keys(ratingBuckets).forEach (bucket => {
 
 // Build Elements
 star1Span.appendChild(star1);
-star2Span.appendChild(star2);
+star5Span.appendChild(star5);
 listDiv.appendChild(star1Span);
 listDiv.appendChild(listHead);
-listDiv.appendChild(star2Span);
+listDiv.appendChild(star5Span);
 section.appendChild(sectionHeader);
 section.appendChild(allRatingsLink);
 section.appendChild(listDiv);
