@@ -23,7 +23,7 @@ function getElementByXPath(xpath)
 
 function getStars(bucket)
 {   
-    let stars = '\u2605'.repeat(Math.floor(bucket/2))
+    let stars = '\u2605'.repeat(Math.floor(bucket/2));
     if ((bucket) % 2 != 0)
     {
         return `${stars}\u00BD`;
@@ -99,7 +99,7 @@ star5.textContent = '\u2605\u2605\u2605\u2605\u2605';
 
 var movieList = getElementByXPath("//*[@id=\"content\"]/div/div/section/ul").getElementsByTagName("li");
 
-var section = document.createElement('section')
+var section = document.createElement('section');
 section.setAttribute('class', 'section ratings-histogram-chart');
 
 var sectionHeader = document.createElement('h2');
@@ -118,7 +118,7 @@ for (let i = 0; i < movieList.length; i++)
     let bucket = movieList[i].getAttribute('data-owner-rating');
     if (bucket != 0) 
     {
-        ratingBuckets[movieList[i].getAttribute('data-owner-rating')]['count'] += 1;
+        ratingBuckets[bucket]['count'] += 1;
     }
 }
 
@@ -134,7 +134,7 @@ else
 }
 
 // Find Highest Count
-let maxCount = 0
+let maxCount = 0;
 Object.keys(ratingBuckets).forEach(bucket => {
     if (ratingBuckets[bucket]['count'] > maxCount) {
         maxCount = ratingBuckets[bucket]['count'];
@@ -155,7 +155,7 @@ Object.keys(ratingBuckets).forEach(bucket => {
 
 // Build Histogram
 Object.keys(ratingBuckets).forEach(bucket => {
-    // Skip bar if simplified
+    // Skip half star bars if simplified
     if (simplify && bucket%2 != 0) {
         return;
     }
@@ -179,6 +179,7 @@ Object.keys(ratingBuckets).forEach(bucket => {
 
     let movieI = document.createElement('i');
     movieI.setAttribute('style', `height: ${ratingBuckets[bucket]['height']}px;`);
+    
     if (ratingBuckets[bucket]['count'] == 0)
     {
         var linkText = 'No ratings';
@@ -205,4 +206,4 @@ section.appendChild(sectionHeader);
 section.appendChild(allRatingsLink);
 section.appendChild(listDiv);
 
-getElementByXPath('//*[@id="content"]/div/div/aside').appendChild(section)
+getElementByXPath('//*[@id="content"]/div/div/aside').appendChild(section);
