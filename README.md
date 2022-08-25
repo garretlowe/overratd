@@ -5,7 +5,7 @@
 
 ---
 
-Overratd adds histograms to Letterboxd lists which display the ratings of the list owner for movies in the list.
+Overratd adds histograms to Letterboxd lists which display the list owner's ratings for movies in the list.
 
 Currently, the extension is limited to 100 movies at a time. This is because it reads the list of movies from the current page and Letterboxd can only display up to 100 movies per list page.
 
@@ -25,4 +25,7 @@ Additionally, the tooltips which display when hovering over bars do not currentl
 
 * Fix Tooltips
 * Also show user's rating histogram for the list
+  * Would probably require an API which the user would login through
 * Overcome 100 movie limit
+  * Send a separate get request to the other pages and collect the results?
+  * Use an API to view lists?
