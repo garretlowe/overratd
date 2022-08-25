@@ -4,7 +4,7 @@
     "description": "A Chrome Extension for Letterboxd which adds rating histograms to public lists based on the author's rating",
     "version": "1.0",
     "manifest_version": 3,
-    "permissions": ["activeTab"],
+    "permissions": [],
     "content_scripts": [
       {
         "matches": ["https://letterboxd.com/*/list/*/"],
