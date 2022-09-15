@@ -11,6 +11,8 @@ Currently, the extension is limited to 100 movies at a time. This is because it 
 
 Additionally, the tooltips which display when hovering over bars do not currently work as you would expect them to based on the profile histograms.
 
+Try it from the [Chrome Web Store](https://chrome.google.com/webstore/detail/overratd/lllkjhpcabokchmdinbmhgmnnkgoehhf)!
+
 <img src="https://github.com/garretlowe/overratd/blob/main/resources/sample1.png?raw=true">
 
 ## Changelog
