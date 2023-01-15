@@ -15,7 +15,7 @@ Try it on:
 
 [Chrome Web Store](https://chrome.google.com/webstore/detail/overratd/lllkjhpcabokchmdinbmhgmnnkgoehhf)
 
-[Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/overratd/)
+[Firefox Add-ons](https://addons.mozilla.org/firefox/addon/overratd/)
 
 <img src="https://github.com/garretlowe/overratd/blob/main/resources/sample1.png?raw=true">
 
