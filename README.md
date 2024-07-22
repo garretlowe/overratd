@@ -21,6 +21,18 @@ Try it on:
 
 ## Changelog
 
+### 1.1
+
+* Migrated code from JS to TS with webpack
+* Shortened graph label to first name only if username if formatted like a full name
+* Cleaned up a lot of poor practices
+  * Replaced xpath DOM searching with selector queries
+  * Removed all `var` usage
+  * Separated functionality into functions where it made sense to
+  * Renamed almost everything for improved readability
+  * Removed unused functionalities
+* Updated to Manifest 3
+
 ### 1.0
 
 * Initial commit <img width="28" alt="HYPERS" src="https://cdn.betterttv.net/emote/5980af4e3a1ac5330e89dc76/1x">
