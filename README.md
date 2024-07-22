@@ -19,6 +19,26 @@ Try it on:
 
 <img src="https://github.com/garretlowe/overratd/blob/main/resources/sample1.png?raw=true">
 
+## Build Instructions
+
+### Setup
+
+To setup dependencies, run the following:
+
+```
+npm install
+```
+
+### Build
+
+To build the extension, run the following:
+
+```
+npm run pack
+```
+
+The extension should now be built to the `./dist/` directory.
+
 ## Changelog
 
 ### 1.1
