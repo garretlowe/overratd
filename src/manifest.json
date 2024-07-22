@@ -1,20 +1,26 @@
 {
-    "name": "Overratd",
-    "author": "Garret Lowe",
-    "description": "An Extension for Letterboxd which adds rating histograms to public lists based on the author's rating",
-    "version": "1.1",
-    "manifest_version": 3,
-    "permissions": [],
-    "content_scripts": [
-      {
-        "matches": ["https://letterboxd.com/*/list/*/"],
-        "js": ["background.js"]
-      }
-    ],
-    "icons": {
-        "16": "/images/overratd16.png",
-        "32": "/images/overratd32.png",
-        "48": "/images/overratd48.png",
-        "128": "/images/overratd128.png"
+  "name": "Overratd",
+  "author": "Garret Lowe",
+  "description": "An Extension for Letterboxd which adds rating histograms to public lists based on the author's rating",
+  "version": "1.1",
+  "manifest_version": 3,
+  "permissions": [],
+  "content_scripts": [
+    {
+      "matches": ["https://letterboxd.com/*/list/*/"],
+      "js": ["background.js"]
     }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{f517ab73-9ad9-4f3c-9fcc-3c6df6a7a298}",
+      "strict_min_version": "58.0"
+    }
+  },
+  "icons": {
+      "16": "/images/overratd16.png",
+      "32": "/images/overratd32.png",
+      "48": "/images/overratd48.png",
+      "128": "/images/overratd128.png"
+  }
 }
