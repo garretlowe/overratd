@@ -61,8 +61,8 @@ The extension should now be built to the `./dist/` directory.
 
 ## Feature Wishlist
 
-* Fix Tooltips
-* Also show user's rating histogram for the list
+* Fix tooltips on Chromium browsers (working on Firefox!)
+* Show user's rating histogram for the list
   * Would probably require an API which the user would login through
 * Overcome 100 movie limit
   * Send a separate get request to the other pages and collect the results?
