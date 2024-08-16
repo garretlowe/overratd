@@ -16,6 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import axios from 'axios'
+
 interface Bucket {
   count: number,
   height: number
@@ -33,16 +35,60 @@ function incrementBuckets (ratingBuckets: Bucket[], movieList: HTMLCollectionOf<
   }
 }
 
-function setCountsForMoviesFromCurrentPage (ratingBuckets: Bucket[]): void {
-  const movieList = document.querySelector('div#content > div > div > section > ul')?.getElementsByTagName<'li'>('li')
+function setCountsForMovies (doc: Document, ratingBuckets: Bucket[]): void {
+  const movieList = doc.querySelector('div#content > div > div > section > ul')?.getElementsByTagName<'li'>('li')
   if (!movieList) return
 
   incrementBuckets(ratingBuckets, movieList)
 }
 
+function setCountsForMoviesFromNextPage (doc: Document, ratingBuckets: Bucket[]): void {
+  const nextPageLink = doc.querySelector('a.next')?.getAttribute('href')
+  if (!nextPageLink) return
+
+  const headers = { Accept: 'text/html' }
+
+  axios
+    .get(nextPageLink, { headers })
+    .then((response) => {
+      const nextDocument = (new DOMParser()).parseFromString(response.data, 'text/html')
+      setCountsForMovies(nextDocument, ratingBuckets)
+      setCountsForMoviesFromNextPage(nextDocument, ratingBuckets)
+    })
+    .catch((error) => {
+      console.error('Could not fetch next page\n' + 
+        `URL: ${nextPageLink}\n` +
+        error
+      )
+    })
+}
+
+function setCountsForMoviesFromPreviousPage (doc: Document, ratingBuckets: Bucket[]): void {
+  const previousPageLink = doc.querySelector('a.previous')?.getAttribute('href')
+  if (!previousPageLink) return
+
+  const headers = { Accept: 'text/html' }
+
+  axios
+    .get(previousPageLink, { headers })
+    .then((response) => {
+      const previousDocument = (new DOMParser()).parseFromString(response.data, 'text/html')
+      setCountsForMoviesFromPreviousPage(previousDocument, ratingBuckets)
+      setCountsForMovies(previousDocument, ratingBuckets)
+    })
+    .catch((error) => {
+      console.error('Could not fetch next page\n' + 
+        `URL: ${previousPageLink}\n` +
+        error
+      )
+    })
+}
+
 export function getRatingBucketsWithCounts (): Bucket[] {
   const ratingBuckets = new Array(10).fill(undefined).map(() => { return { count: 0, height: 44 } })
-  setCountsForMoviesFromCurrentPage(ratingBuckets)
+  // setCountsForMoviesFromPreviousPage(document, ratingBuckets)
+  setCountsForMovies(document, ratingBuckets)
+  // setCountsForMoviesFromNextPage(document, ratingBuckets)
   return ratingBuckets
 }
 
@@ -130,7 +176,7 @@ export function buildHistogram (ratingBuckets: Bucket[]): DocumentFragment {
     const bucketNumber = index + 1
     const isHalfStarBucket = bucketNumber % 2 !== 0
     if (simplify && isHalfStarBucket) continue
-  
+
     const width = simplify ? 31 : 15
     const leftAdjust = simplify ? (16 * bucketNumber) - 32 : (16 * bucketNumber) - 16
     const ratingGroupAttributes = {
@@ -154,7 +200,7 @@ export function buildHistogram (ratingBuckets: Bucket[]): DocumentFragment {
     ratingLink.textContent = ratingLinkText
     
     const ratingBar = createElementWithAttribute('i', { style: `height: ${bucket.height}px` })
-  
+
     ratingLink.appendChild(ratingBar)
     ratingGroup.appendChild(ratingLink)
     listHead.appendChild(ratingGroup)
