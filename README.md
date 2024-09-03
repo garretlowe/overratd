@@ -42,6 +42,13 @@ The extension should now be built to the `./dist/` directory.
 
 ## Changelog
 
+### 1.2
+
+* Add mean rating display to histograms
+  * similar to the display on individual film pages
+* Normalized code styling
+* Added a bunch of disabled stuff that isn't being used yet
+
 ### 1.1
 
 * Migrated code from JS to TS with webpack
