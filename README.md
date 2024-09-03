@@ -1,21 +1,22 @@
+<center>
 
-<p align="center"><img width="128" alt="Overratd Logo" src="https://github.com/garretlowe/overratd/blob/main/src/images/overratd128.png?raw=true"></p>
-<h2 align="center"><b>Overratd</b></h2>
-<p align="center"><b>Add histograms to every list on Letterboxd</b></p>
+  # Overratd
 
----
+  ![Overratd](https://github.com/garretlowe/overratd/blob/main/src/images/overratd128.png?raw=true)
+
+  Add histograms to every list on Letterboxd
+
+  [![Chrome Extension](https://img.shields.io/chrome-web-store/users/lllkjhpcabokchmdinbmhgmnnkgoehhf?logo=chromewebstore)](https://chromewebstore.google.com/detail/overratd/lllkjhpcabokchmdinbmhgmnnkgoehhf)
+  [![Mozilla Add-on](https://img.shields.io/amo/users/overratd?logo=firefoxbrowser)](https://addons.mozilla.org/firefox/addon/overratd/)
+
+</center>
+
 
 Overratd adds histograms to Letterboxd lists which display the list owner's ratings for movies in the list.
 
 Currently, the extension is limited to 100 movies at a time. This is because it reads the list of movies from the current page and Letterboxd can only display up to 100 movies per list page.
 
 Additionally, the tooltips which display when hovering over bars do not currently work as you would expect them to based on the profile histograms.
-
-Try it on: 
-
-[Chrome Web Store](https://chrome.google.com/webstore/detail/overratd/lllkjhpcabokchmdinbmhgmnnkgoehhf)
-
-[Firefox Add-ons](https://addons.mozilla.org/firefox/addon/overratd/)
 
 <img src="https://github.com/garretlowe/overratd/blob/main/resources/sample1.png?raw=true">
 
