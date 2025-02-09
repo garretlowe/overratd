@@ -28,8 +28,17 @@ const HALF_FRACTION = '½'
 
 function incrementBuckets (ratingBuckets: Bucket[], movieList: HTMLCollectionOf<HTMLElementTagNameMap['li']>): void {
   for (const movie of movieList) {
-    const bucketNumber = Number.parseInt(movie.getAttribute('data-owner-rating') ?? '0') - 1
-    if (bucketNumber !== -1) {
+    const isGridView = movie.hasAttribute('data-owner-rating')
+    let bucketNumber = -1
+    if (isGridView) {
+      bucketNumber = Number.parseInt(movie.getAttribute('data-owner-rating') ?? '0') - 1
+    } else { // List View
+      const ratingText = movie.querySelector('div.film-detail-content > p > span')?.textContent?.trim() ?? ''
+      bucketNumber += ratingText.length * 2
+      if (ratingText.charAt(ratingText.length - 1) === HALF_FRACTION) bucketNumber -= 1
+    }
+
+    if (bucketNumber >= 0) {
       ratingBuckets[bucketNumber].count += 1
     }
   }
@@ -85,7 +94,7 @@ function setCountsForMoviesFromPreviousPage (doc: Document, ratingBuckets: Bucke
 }
 
 export function getRatingBucketsWithCounts (): Bucket[] {
-  const ratingBuckets = new Array(10).fill(undefined).map(() => { return { count: 0, height: 44 } })
+  const ratingBuckets = new Array(10).fill(undefined).map(() => { return { count: 0, height: 44.0 } })
   // setCountsForMoviesFromPreviousPage(document, ratingBuckets)
   setCountsForMovies(document, ratingBuckets)
   // setCountsForMoviesFromNextPage(document, ratingBuckets)
@@ -119,8 +128,7 @@ function calculateCountsAndHeights (ratingBuckets: Bucket[]): number {
     movieCount += bucket.count
   }
   for (const bucket of ratingBuckets) {
-    if (bucket.count === 0) { bucket.height = 1; continue }
-    bucket.height *= bucket.count / maxCount
+    bucket.height = bucket.count === 0 ? 1 : (bucket.height * bucket.count / maxCount)
   }
   return movieCount
 }
@@ -199,7 +207,7 @@ export function buildHistogram (ratingBuckets: Bucket[]): DocumentFragment {
     const ratingLink = createElementWithAttribute('a', ratingLinkAttributes)
     ratingLink.textContent = ratingLinkText
     
-    const ratingBar = createElementWithAttribute('i', { style: `height: ${bucket.height}px` })
+    const ratingBar = createElementWithAttribute('i', { style: `height: ${bucket.height}px;` })
 
     ratingLink.appendChild(ratingBar)
     ratingGroup.appendChild(ratingLink)
