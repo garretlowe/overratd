@@ -11,7 +11,6 @@
 
 </center>
 
-
 Overratd adds histograms to Letterboxd lists which display the list owner's ratings for movies in the list.
 
 Currently, the extension is limited to 100 movies at a time. This is because it reads the list of movies from the current page and Letterboxd can only display up to 100 movies per list page.
@@ -26,7 +25,7 @@ Additionally, the tooltips which display when hovering over bars do not currentl
 
 To setup dependencies, run the following:
 
-```
+```bash
 npm install
 ```
 
@@ -34,13 +33,18 @@ npm install
 
 To build the extension, run the following:
 
-```
+```bash
 npm run pack
 ```
 
 The extension should now be built to the `./dist/` directory.
 
 ## Changelog
+
+### 1.3
+
+* Fix histogram display when using List View
+* Misc convention cleanup & style matching
 
 ### 1.2
 
