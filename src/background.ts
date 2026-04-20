@@ -16,16 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import * as Overratd from './overratd'
+import * as Overratd from './overratd';
 
-function insertHistogram (): void {
-  const sidebar = document.querySelector('aside.sidebar')
-  if (sidebar === null) return
+function insertHistogram(): void {
+  const sidebar = document.querySelector('aside.sidebar');
+  if (sidebar === null) return;
 
-  const ratingBuckets = Overratd.getRatingBucketsWithCounts()
-  const histogramFragment = Overratd.buildHistogram(ratingBuckets)
+  const ratingBuckets = Overratd.getRatingBucketsWithCounts();
+  const histogramFragment = Overratd.buildHistogram(ratingBuckets);
 
-  sidebar.appendChild(histogramFragment)
+  sidebar.appendChild(histogramFragment);
 }
 
-insertHistogram()
+insertHistogram();
+

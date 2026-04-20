@@ -16,216 +16,263 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import axios from 'axios'
+// import axios from 'axios';
 
 interface Bucket {
-  count: number,
-  height: number
+  count: number;
+  value: number;
 }
 
-const STAR = '★'
-const HALF_FRACTION = '½'
+const STAR = '★';
+const HALF_FRACTION = '½';
 
-function incrementBuckets (ratingBuckets: Bucket[], movieList: HTMLCollectionOf<HTMLElementTagNameMap['li']>): void {
+const STAR_ATTRIBUTES = (xTranslation: number) => {
+  return {
+    transform: `translate(${xTranslation}, 0)`,
+    'fill-rule': 'evenodd',
+    d: 'M5.065.45c-.22-.61-.95-.59-1.14 0l-.75 2.57H.705c-.73 0-.96.62-.37 1.07l1.99 1.53-.76 2.49c-.22.73.34 1.16.93.71l2-1.53 2 1.53c.59.45 1.15.02.93-.71l-.76-2.49 1.99-1.53c.59-.45.39-1.07-.33-1.07h-2.48z',
+  };
+};
+
+function incrementBuckets(ratingBuckets: Bucket[], movieList: HTMLCollectionOf<HTMLElementTagNameMap['li']>): void {
   for (const movie of movieList) {
-    const isGridView = movie.hasAttribute('data-owner-rating')
-    let bucketNumber = -1
+    const isGridView = movie.hasAttribute('data-owner-rating');
+    let bucketNumber = -1;
     if (isGridView) {
-      bucketNumber = Number.parseInt(movie.getAttribute('data-owner-rating') ?? '0') - 1
-    } else { // List View
-      const ratingText = movie.querySelector('div.film-detail-content > p > span')?.textContent?.trim() ?? ''
-      bucketNumber += ratingText.length * 2
-      if (ratingText.charAt(ratingText.length - 1) === HALF_FRACTION) bucketNumber -= 1
+      bucketNumber = Number.parseInt(movie.getAttribute('data-owner-rating') ?? '0') - 1;
+    } else {
+      // List View
+      const ratingText = movie.querySelector('div.film-detail-content > p > span')?.textContent?.trim() ?? '';
+      bucketNumber += ratingText.length * 2;
+      if (ratingText.charAt(ratingText.length - 1) === HALF_FRACTION) bucketNumber -= 1;
     }
 
-    if (bucketNumber >= 0) {
-      ratingBuckets[bucketNumber].count += 1
-    }
+    if (bucketNumber >= 0) ratingBuckets[bucketNumber].count += 1;
   }
 }
 
-function setCountsForMovies (doc: Document, ratingBuckets: Bucket[]): void {
-  const movieList = doc.querySelector('div#content > div > div > section > ul')?.getElementsByTagName<'li'>('li')
-  if (!movieList) return
+function setCountsForMovies(doc: Document, ratingBuckets: Bucket[]): void {
+  const movieList = doc.querySelector('div#content > div > div > section > ul')?.getElementsByTagName<'li'>('li');
+  if (!movieList) return;
 
-  incrementBuckets(ratingBuckets, movieList)
+  incrementBuckets(ratingBuckets, movieList);
 }
 
-function setCountsForMoviesFromNextPage (doc: Document, ratingBuckets: Bucket[]): void {
-  const nextPageLink = doc.querySelector('a.next')?.getAttribute('href')
-  if (!nextPageLink) return
+// function setCountsForMoviesFromNextPage(doc: Document, ratingBuckets: Bucket[]): void {
+//   const nextPageLink = doc.querySelector('a.next')?.getAttribute('href');
+//   if (!nextPageLink) return;
 
-  const headers = { Accept: 'text/html' }
+//   const headers = { Accept: 'text/html' };
 
-  axios
-    .get(nextPageLink, { headers })
-    .then((response) => {
-      const nextDocument = (new DOMParser()).parseFromString(response.data, 'text/html')
-      setCountsForMovies(nextDocument, ratingBuckets)
-      setCountsForMoviesFromNextPage(nextDocument, ratingBuckets)
-    })
-    .catch((error) => {
-      console.error('Could not fetch next page\n' + 
-        `URL: ${nextPageLink}\n` +
-        error
-      )
-    })
-}
+//   axios
+//     .get(nextPageLink, { headers })
+//     .then((response) => {
+//       const nextDocument = new DOMParser().parseFromString(response.data, 'text/html');
+//       setCountsForMovies(nextDocument, ratingBuckets);
+//       setCountsForMoviesFromNextPage(nextDocument, ratingBuckets);
+//     })
+//     .catch((error) => {
+//       console.error('Could not fetch next page\n' + `URL: ${nextPageLink}\n` + error);
+//     });
+// }
 
-function setCountsForMoviesFromPreviousPage (doc: Document, ratingBuckets: Bucket[]): void {
-  const previousPageLink = doc.querySelector('a.previous')?.getAttribute('href')
-  if (!previousPageLink) return
+// function setCountsForMoviesFromPreviousPage(doc: Document, ratingBuckets: Bucket[]): void {
+//   const previousPageLink = doc.querySelector('a.previous')?.getAttribute('href');
+//   if (!previousPageLink) return;
 
-  const headers = { Accept: 'text/html' }
+//   const headers = { Accept: 'text/html' };
 
-  axios
-    .get(previousPageLink, { headers })
-    .then((response) => {
-      const previousDocument = (new DOMParser()).parseFromString(response.data, 'text/html')
-      setCountsForMoviesFromPreviousPage(previousDocument, ratingBuckets)
-      setCountsForMovies(previousDocument, ratingBuckets)
-    })
-    .catch((error) => {
-      console.error('Could not fetch next page\n' + 
-        `URL: ${previousPageLink}\n` +
-        error
-      )
-    })
-}
+//   axios
+//     .get(previousPageLink, { headers })
+//     .then((response) => {
+//       const previousDocument = new DOMParser().parseFromString(response.data, 'text/html');
+//       setCountsForMoviesFromPreviousPage(previousDocument, ratingBuckets);
+//       setCountsForMovies(previousDocument, ratingBuckets);
+//     })
+//     .catch((error) => {
+//       console.error('Could not fetch next page\n' + `URL: ${previousPageLink}\n` + error);
+//     });
+// }
 
-export function getRatingBucketsWithCounts (): Bucket[] {
-  const ratingBuckets = new Array(10).fill(undefined).map(() => { return { count: 0, height: 44.0 } })
+export function getRatingBucketsWithCounts(): Bucket[] {
+  const ratingBuckets = new Array(10).fill(undefined).map(() => {
+    return { count: 0.0, value: 1.0 };
+  });
   // setCountsForMoviesFromPreviousPage(document, ratingBuckets)
-  setCountsForMovies(document, ratingBuckets)
+  setCountsForMovies(document, ratingBuckets);
   // setCountsForMoviesFromNextPage(document, ratingBuckets)
-  return ratingBuckets
+  return ratingBuckets;
 }
 
-function createElementWithAttribute (tagName: string, attributes?: Record<string, string>): HTMLElement {
-  const element = document.createElement(tagName)
-  for (const attributeName in attributes) {
-    element.setAttribute(attributeName, attributes[attributeName])
-  }
-  return element
+function createElementWithAttribute(tagName: string, attributes?: Record<string, string>): HTMLElement {
+  const element = document.createElement(tagName);
+  for (const attributeName in attributes) element.setAttribute(attributeName, attributes[attributeName]);
+  return element;
 }
 
-function getStars (bucketNumber: number): string {   
-  const stars = STAR.repeat(Math.floor(bucketNumber / 2))
-  return bucketNumber % 2 !== 0 ? `${stars}${HALF_FRACTION}` : stars
+function getStars(bucketNumber: number): string {
+  const stars = STAR.repeat(Math.floor(bucketNumber / 2));
+  return bucketNumber % 2 !== 0 ? `${stars}${HALF_FRACTION}` : stars;
 }
 
-function getOwnerName (): string {
-  let name = document.querySelector('a.name > span')?.textContent ?? ''
-  name = name.split(' ')[0] // If it looks like a full name, only take the first name
-  return (name.slice(-1) === 's')? `${name}'` : `${name}'s`
+function getStarsForHeader(bucketNumber: number): string {
+  const starsText = getStars(bucketNumber);
+  if (starsText === HALF_FRACTION) return `half-${STAR}`;
+  return starsText;
 }
 
-function calculateCountsAndHeights (ratingBuckets: Bucket[]): number {
-  let maxCount = 0
-  let movieCount = 0
+function getOwnerName(): string {
+  let name = document.querySelector('a.name > span')?.textContent ?? '';
+  name = name.split(' ')[0]; // If it looks like a full name, only take the first name
+  return name.slice(-1) === 's' ? `${name}'` : `${name}'s`;
+}
+
+function calculateCountsAndValues(ratingBuckets: Bucket[]): number {
+  let maxCount = 0;
+  let movieCount = 0;
   for (const bucket of ratingBuckets) {
-    if (bucket.count > maxCount) maxCount = bucket.count
-    movieCount += bucket.count
+    if (bucket.count > maxCount) maxCount = bucket.count;
+    movieCount += bucket.count;
   }
-  for (const bucket of ratingBuckets) {
-    bucket.height = bucket.count === 0 ? 1 : (bucket.height * bucket.count / maxCount)
-  }
-  return movieCount
+
+  for (const bucket of ratingBuckets) bucket.value = (1.0 * bucket.count) / maxCount;
+
+  return movieCount;
 }
 
-function roundToNearestHundredth (num: number): number {
-  return Math.round(num * 100) / 100.0
+function roundToNearestHundredth(num: number): number {
+  return Math.round(num * 100) / 100.0;
 }
 
-function calculateAverageRating (ratingBuckets: Bucket[], movieCount: number): string {
-  if (movieCount === 0) return '-'
-  let average = 0
+function calculateAverageRating(ratingBuckets: Bucket[], movieCount: number): string {
+  if (movieCount === 0) return '-';
+  let average = 0;
   for (let i = 0; i < ratingBuckets.length; i++) {
-    const starValue = (i + 1) * 0.5
-    average += ratingBuckets[i].count * starValue / movieCount
+    const starValue = (i + 1) * 0.5;
+    average += (ratingBuckets[i].count * starValue) / movieCount;
   }
-  if (average === 0) return '-'
-  return `${roundToNearestHundredth(average)}`
+  if (average === 0) return '-';
+  return `${roundToNearestHundredth(average)}`;
 }
 
-export function buildHistogram (ratingBuckets: Bucket[]): DocumentFragment {
-  const section = createElementWithAttribute('section', { class: 'section ratings-histogram-chart' })
-  const star1Span = createElementWithAttribute('span', { class: 'rating-green rating-green-tiny rating-1' })
-  const star1 = createElementWithAttribute('span', { class: 'rating rated-2' })
-  star1.textContent = STAR
-  const star5Span = createElementWithAttribute('span', { class: 'rating-green rating-green-tiny rating-5' })
-  const star5 = createElementWithAttribute('span', { class: 'rating rated-10' })
-  star5.textContent = STAR.repeat(5)
-  const sectionHeader = createElementWithAttribute('h2', { class: 'section-heading' })
-  sectionHeader.textContent = `${getOwnerName()} Ratings`
-  
-  // Find Highest Count & Count Movies
-  const allRatingsLink = createElementWithAttribute('p', { class: 'all-link' })
-  const movieTotal = calculateCountsAndHeights(ratingBuckets)
-  allRatingsLink.textContent = `${movieTotal}`
+function isSimplified(ratingBuckets: Bucket[]): boolean {
+  for (let i = 0; i < ratingBuckets.length; i += 2) if (ratingBuckets[i].count !== 0) return false;
+  return true;
+}
 
-  // Calculate Rating Average
-  const averageRatingSpan = createElementWithAttribute('span', { class: 'average-rating' })
-  const averageRating = calculateAverageRating(ratingBuckets, movieTotal)
-  const averageRatingTitle = averageRating !== '-' ? `Mean rating of ${averageRating} based on ${movieTotal} ratings` :'No ratings'
-  const averageRatingLink = createElementWithAttribute('a', { class: 'tooltip display-rating', title: averageRatingTitle })
-  averageRatingLink.textContent = averageRating
-  averageRatingSpan.appendChild(averageRatingLink)
+export function buildHistogram(ratingBuckets: Bucket[]): DocumentFragment {
+  const section = createElementWithAttribute('section', { class: 'section ratings-histogram-chart' });
+  const sectionHeader = createElementWithAttribute('header', { class: 'section-header -divider -spaced-loose' });
 
-  // Determine Complexity
-  const simplify = ratingBuckets[0].count === 0 && ratingBuckets[2].count === 0 && ratingBuckets[4].count === 0 && ratingBuckets[6].count === 0 && ratingBuckets[8].count === 0
-  const complexity = simplify ? 'condensed' : 'exploded'
+  // Build Header Title
+  const sectionHeaderTitle = createElementWithAttribute('h2', { class: 'section-heading -omitdivider heading' });
+  const sectionHeaderText = createElementWithAttribute('a');
+  sectionHeaderText.textContent = `${getOwnerName()} Ratings`;
 
-  const listDiv = createElementWithAttribute('div', { class: `rating-histogram clear rating-histogram-${complexity}` })
-  const listHead = document.createElement('ul')
+  sectionHeaderTitle.appendChild(sectionHeaderText);
+  sectionHeader.appendChild(sectionHeaderTitle);
+
+  // Build Header Count
+  const sectionHeaderCount = createElementWithAttribute('aside', { class: 'aside' });
+  const sectionHeaderCountDiv = createElementWithAttribute('div', { class: 'section-accessories' });
+  const sectionHeaderCountText = createElementWithAttribute('a', { class: 'accessory' });
+  const movieTotal = calculateCountsAndValues(ratingBuckets);
+  sectionHeaderCountText.textContent = movieTotal.toLocaleString();
+
+  sectionHeaderCountDiv.appendChild(sectionHeaderCountText);
+  sectionHeaderCount.appendChild(sectionHeaderCountDiv);
+  sectionHeader.appendChild(sectionHeaderCount);
+
+  section.appendChild(sectionHeader);
 
   // Build Histogram
-  for (const [ index, bucket ] of ratingBuckets.entries()) {
-    const bucketNumber = index + 1
-    const isHalfStarBucket = bucketNumber % 2 !== 0
-    if (simplify && isHalfStarBucket) continue
+  const ratingHistogram = createElementWithAttribute('div', { class: 'rating-histogram' });
+  const histogramLayout = createElementWithAttribute('div', { class: 'layout' });
 
-    const width = simplify ? 31 : 15
-    const leftAdjust = simplify ? (16 * bucketNumber) - 32 : (16 * bucketNumber) - 16
-    const ratingGroupAttributes = {
-      class: 'rating-histogram-bar',
-      style: `width: ${width}px; left: ${leftAdjust}px`
-    }
-    const ratingGroup = createElementWithAttribute('li', ratingGroupAttributes)
+  // Build Star 1
+  const star1Span = createElementWithAttribute('span', {
+    class: 'stars -start rating-green rating-green-tiny rating-1',
+  });
+  const star1 = createElementWithAttribute('span', { class: 'rating rated-2' });
+  star1.textContent = STAR;
 
-    let ratingLinkText
-    if (bucket.count === 0) {
-      ratingLinkText = 'No ratings'
-    } else {
-      const ratingPercentage = movieTotal === 0 ? 0 : Math.round(bucket.count / movieTotal * 100)
-      ratingLinkText = `${bucket.count} ${getStars(bucketNumber)} ratings (${ratingPercentage}%)`
-    }
-    const ratingLinkAttributes = {
-      class: 'ir tooltip',
-      'data-original-title': ratingLinkText
-    }
-    const ratingLink = createElementWithAttribute('a', ratingLinkAttributes)
-    ratingLink.textContent = ratingLinkText
-    
-    const ratingBar = createElementWithAttribute('i', { style: `height: ${bucket.height}px;` })
+  star1Span.appendChild(star1);
+  histogramLayout.appendChild(star1Span);
 
-    ratingLink.appendChild(ratingBar)
-    ratingGroup.appendChild(ratingLink)
-    listHead.appendChild(ratingGroup)
+  // Build Rating Table
+  const ratingTable = createElementWithAttribute('table', { class: 'chart' });
+  const ratingCaption = createElementWithAttribute('caption', { class: '_sr-only' });
+  ratingCaption.textContent = 'Rating Distribution';
+
+  ratingTable.appendChild(ratingCaption);
+
+  // Build Table Header
+  const tableHead = createElementWithAttribute('thead', { class: '_sr-only' });
+  const tableHeadRow = createElementWithAttribute('tr');
+  const tableHeader1 = createElementWithAttribute('th', { scope: 'col' });
+  tableHeader1.textContent = 'Rating';
+  const tableHeader2 = createElementWithAttribute('th', { scope: 'col' });
+  tableHeader2.textContent = 'Count';
+
+  tableHeadRow.appendChild(tableHeader1);
+  tableHeadRow.appendChild(tableHeader2);
+  tableHead.appendChild(tableHeadRow);
+
+  ratingTable.appendChild(tableHead);
+
+  // Build Table Body
+  const tableBody = createElementWithAttribute('tbody', { class: 'plot' });
+  const simplify = isSimplified(ratingBuckets);
+  const increment = simplify ? 2 : 1;
+  for (let i = simplify ? 1 : 0; i < ratingBuckets.length; i += increment) {
+    const bucket = ratingBuckets[i];
+    const tableRow = createElementWithAttribute('tr', { class: 'column', style: `--value: ${bucket.value};` });
+    const rowHeader = createElementWithAttribute('th', { scope: 'row', class: '_sr-only' });
+    const headerText = getStarsForHeader(i + 1);
+    rowHeader.textContent = headerText;
+
+    tableRow.appendChild(rowHeader);
+
+    const cell = createElementWithAttribute('td', { class: 'cell' });
+    const ratingPercentage = movieTotal !== 0 ? Math.round(bucket.value * 100) : 0.0;
+    const cellLinkTitle =
+      bucket.count === 0 ? `No ${headerText} ratings` : `${bucket.count} ${headerText} ratings (${ratingPercentage}%)`;
+    const cellLink = createElementWithAttribute('a', {
+      class: 'barcolumn tooltip',
+      'data-original-title': cellLinkTitle,
+    });
+    const linkSpan = createElementWithAttribute('span', { class: '_sr-only' });
+    linkSpan.textContent = `${bucket.count} (${ratingPercentage}%)`;
+    const spanBar = createElementWithAttribute('span', { class: 'bar' });
+    const spanFill = createElementWithAttribute('span', { class: 'fill' });
+
+    spanBar.appendChild(spanFill);
+    cellLink.appendChild(linkSpan);
+    cellLink.appendChild(spanBar);
+    cell.appendChild(cellLink);
+    tableRow.appendChild(cell);
+    tableBody.appendChild(tableRow);
   }
-  
-  // Build Elements
-  star1Span.appendChild(star1)
-  star5Span.appendChild(star5)
-  listDiv.appendChild(star1Span)
-  listDiv.appendChild(listHead)
-  listDiv.appendChild(star5Span)
-  section.appendChild(sectionHeader)
-  section.appendChild(allRatingsLink)
-  section.appendChild(averageRatingSpan)
-  section.appendChild(listDiv)
 
-  const histogramFragment = new DocumentFragment()
-  histogramFragment.append(section)
-  return histogramFragment
+  ratingTable.appendChild(tableBody);
+  histogramLayout.appendChild(ratingTable);
+
+  // Build Star 5
+  const star5Span = createElementWithAttribute('span', {
+    class: 'stars -end rating-green rating-green-tiny rating-5',
+  });
+  const star5 = createElementWithAttribute('span', { class: 'rating rated-10' });
+  star5.textContent = STAR.repeat(5);
+
+  star5Span.appendChild(star5);
+  histogramLayout.appendChild(star5Span);
+
+  // Finish Build
+  ratingHistogram.appendChild(histogramLayout);
+  section.appendChild(ratingHistogram);
+
+  const histogramFragment = new DocumentFragment();
+  histogramFragment.append(section);
+  return histogramFragment;
 }
+
